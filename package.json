@@ -69,6 +69,7 @@
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
     "extends": [
       "react-app",
       "react-app/jest"
