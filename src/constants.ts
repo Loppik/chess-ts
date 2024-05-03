@@ -2,15 +2,15 @@ export const CELL_SIZE = 100;
 
 export enum FigureColor {
   White = 'white',
-  Black = 'black'
+  Black = 'black',
 }
 
 export enum FigureType {
-  Bishop = 'bishop'
+  Bishop = 'bishop',
 }
 
 export const generateFigure = (type: FigureType, color: FigureColor) => ({
   type,
   color,
-  img: 'Chess-Bishop--Streamline-Plump.png'
-})
+  img: 'Chess-Bishop--Streamline-Plump.png',
+});
