@@ -12,5 +12,5 @@ export enum FigureType {
 export const generateFigure = (type: FigureType, color: FigureColor) => ({
   type,
   color,
-  img: 'Chess-Bishop--Streamline-Plump.png',
+  img: 'WhiteBishop.png',
 });
