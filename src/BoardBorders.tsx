@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from 'styled-components';
 import { CELL_SIZE } from './constants';
-import { IStyledComponent } from './interfaces';
+import { IStyledComponentProps } from './interfaces';
 
 const BorderSymbol = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ const BoardContainer = styled.div`
   grid-template-columns: 30px repeat(8, ${CELL_SIZE}px) 30px;
 `;
 
-const LeftBoarder = styled(({ className }: IStyledComponent) => (
+const LeftBoarder = styled(({ className }: IStyledComponentProps) => (
   <div className={className}>
     <div>
       {Array(8)
@@ -40,7 +40,7 @@ const LeftBoarder = styled(({ className }: IStyledComponent) => (
   grid-column: 1 / 2;
 `;
 const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-const BottomBoarder = styled(({ className }: IStyledComponent) => (
+const BottomBoarder = styled(({ className }: IStyledComponentProps) => (
   <div className={className}>
     {Array(8)
       .fill(1)

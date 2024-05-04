@@ -1,3 +1,3 @@
-export interface IStyledComponent {
+export interface IStyledComponentProps {
   className?: string;
 }

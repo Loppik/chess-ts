@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
 import { CELL_SIZE, FigureColor, FigureType } from './constants';
-import { IStyledComponent } from './interfaces';
+import { IStyledComponentProps } from './interfaces';
 import { generateFigure } from './helpers';
 import { Figure } from './types';
 
@@ -36,7 +36,7 @@ const INITIAL_BOARD = [
 ];
 
 const BORDER_SIZE = 5;
-interface ICellProps extends IStyledComponent {
+interface ICellProps extends IStyledComponentProps {
   cellItem: Figure | null;
   isBlack: boolean;
 }
@@ -66,7 +66,7 @@ const Cell = styled(({ className, cellItem }: ICellProps) => {
   }
 `;
 
-interface ICellsProps extends IStyledComponent {
+interface ICellsProps extends IStyledComponentProps {
   board: (Figure | null)[][];
 }
 const Cells = styled(({ board, className }: ICellsProps) => {
