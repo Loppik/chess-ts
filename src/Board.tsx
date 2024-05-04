@@ -1,22 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
-import {
-  CELL_SIZE,
-  FigureColor,
-  FigureType,
-  generateFigure,
-} from './constants';
+import { CELL_SIZE, FigureColor, FigureType } from './constants';
 import { IStyledComponent } from './interfaces';
+import { generateFigure } from './helpers';
+import { Figure } from './types';
 
+const INITIAL_BOARD = [
+  [null, null, null, null, null, null, null, null],
+  [
+    generateFigure(FigureType.Pawn, FigureColor.Black),
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [
+    null,
+    generateFigure(FigureType.Pawn, FigureColor.White),
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  [null, null, null, null, null, null, null, null],
+];
+
+const BORDER_SIZE = 5;
 interface ICellProps extends IStyledComponent {
-  cellItem: any;
+  cellItem: Figure | null;
   isBlack: boolean;
 }
 const Cell = styled(({ className, cellItem }: ICellProps) => {
   return (
     <div className={className}>
-      {cellItem !== EMPTY_CELL && (
+      {cellItem && (
         <img
           src={`/figures/${cellItem.img}`}
           alt={`${cellItem.color} ${cellItem.type}`}
@@ -30,96 +57,19 @@ const Cell = styled(({ className, cellItem }: ICellProps) => {
   justify-content: center;
   align-items: center;
   width: ${CELL_SIZE}px;
-  height: ${CELL_SIZE}px;
+  height: ${CELL_SIZE - BORDER_SIZE * 2}px;
   background: ${({ isBlack }) => (isBlack ? 'sienna' : 'antiquewhite')};
+  border: ${BORDER_SIZE}px solid transparent;
+  &:hover {
+    cursor: pointer;
+    border-color: black;
+  }
 `;
 
-const EMPTY_CELL = 'x';
-
-const board = [
-  [
-    generateFigure(FigureType.Bishop, FigureColor.Black),
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    generateFigure(FigureType.Bishop, FigureColor.White),
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-  [
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-    EMPTY_CELL,
-  ],
-];
-
-const Cells = styled(({ className }: IStyledComponent) => {
+interface ICellsProps extends IStyledComponent {
+  board: (Figure | null)[][];
+}
+const Cells = styled(({ board, className }: ICellsProps) => {
   return (
     <div className={className}>
       {board.map((row, i) => (
@@ -137,10 +87,12 @@ const Cells = styled(({ className }: IStyledComponent) => {
 `;
 
 const Board = () => {
+  const [board] = useState(INITIAL_BOARD);
+
   return (
     <section>
       <BoardBorders>
-        <Cells />
+        <Cells board={board} />
       </BoardBorders>
     </section>
   );
