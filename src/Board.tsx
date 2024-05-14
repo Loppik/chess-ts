@@ -3,8 +3,8 @@ import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
 import { CELL_SIZE, FigureColor, FigureType } from './constants';
 import { IStyledComponentProps } from './interfaces';
-import { generateFigure } from './helpers';
-import { Figure } from './types';
+import { copyBoard, generateFigure } from './helpers';
+import { TBoard, TFigure } from './types';
 
 const INITIAL_BOARD = [
   [null, null, null, null, null, null, null, null],
@@ -38,7 +38,7 @@ const INITIAL_BOARD = [
 const BORDER_SIZE = 5;
 const BORDER_COLOR_OF_THE_SELECTED_CELL = 'red';
 interface ICellProps extends IStyledComponentProps {
-  cellItem: Figure | null;
+  cellItem: TFigure | null;
   isBlack: boolean;
   isSelected: boolean;
   onCellClick: () => void;
@@ -73,9 +73,9 @@ const Cell = styled(({ className, cellItem, onCellClick }: ICellProps) => {
 `;
 
 interface ICellsProps extends IStyledComponentProps {
-  board: (Figure | null)[][];
+  board: (TFigure | null)[][];
   onCellClick: (posX: number, posY: number) => () => void;
-  firstSelectedPosition: SelectedPosition;
+  firstSelectedPosition: CellPosition;
 }
 const Cells = styled(
   ({ board, onCellClick, firstSelectedPosition, className }: ICellsProps) => {
@@ -111,17 +111,18 @@ const Cells = styled(
   grid-column: 2 / 10;
 `;
 
-type SelectedPosition = { posX: number; posY: number } | null;
+type CellPosition = { posX: number; posY: number } | null;
 const Board = () => {
-  const [board] = useState(INITIAL_BOARD);
+  const [board, setBoard] = useState<TBoard>(INITIAL_BOARD);
   const [firstSelectedPosition, setFirstSelectedPosition] =
-    useState<SelectedPosition>(null);
+    useState<CellPosition>(null);
 
   const onCellClick = (posX: number, posY: number) => () => {
     if (!firstSelectedPosition) {
       setFirstSelectedPosition({ posX, posY });
       return;
     }
+
     if (
       firstSelectedPosition &&
       posX === firstSelectedPosition.posX &&
@@ -130,6 +131,21 @@ const Board = () => {
       setFirstSelectedPosition(null);
       return;
     }
+
+    moveFigure(firstSelectedPosition, { posX, posY });
+    setFirstSelectedPosition(null);
+  };
+
+  const moveFigure = (fromPosition: CellPosition, toPosition: CellPosition) => {
+    if (!fromPosition || !toPosition) {
+      return;
+    }
+
+    const newBoard = copyBoard(board);
+    newBoard[toPosition.posX][toPosition.posY] =
+      board[fromPosition.posX][fromPosition.posY];
+    newBoard[fromPosition.posX][fromPosition.posY] = null;
+    setBoard(newBoard);
   };
 
   return (

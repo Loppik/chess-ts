@@ -1,8 +1,8 @@
 # TODO
 - [ ] Add the ability to move the figures
     - [ ] Add the ability to move the figure anywhere
-        - [ ] Add figure selection
-        - [ ] Add change the position of the selected figure
+        - [x] Add figure selection
+        - [x] Add change the position of the selected figure
     - [ ] Add alternately move system 
 # Getting Started with Create React App
 
