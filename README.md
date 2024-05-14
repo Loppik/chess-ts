@@ -1,3 +1,9 @@
+# TODO
+- [ ] Add the ability to move the figures
+    - [ ] Add the ability to move the figure anywhere
+        - [ ] Add figure selection
+        - [ ] Add change the position of the selected figure
+    - [ ] Add alternately move system 
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
