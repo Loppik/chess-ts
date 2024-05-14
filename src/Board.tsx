@@ -116,10 +116,14 @@ const Board = () => {
   const [board, setBoard] = useState<TBoard>(INITIAL_BOARD);
   const [firstSelectedPosition, setFirstSelectedPosition] =
     useState<CellPosition>(null);
+  const [currentMove, setCurrentMove] = useState<FigureColor>(
+    FigureColor.White,
+  );
 
   const onCellClick = (posX: number, posY: number) => () => {
     if (!firstSelectedPosition) {
-      if (board[posX][posY]) {
+      const figure = board[posX][posY];
+      if (figure && figure.color === currentMove) {
         setFirstSelectedPosition({ posX, posY });
       }
       return;
@@ -136,6 +140,7 @@ const Board = () => {
 
     moveFigure(firstSelectedPosition, { posX, posY });
     setFirstSelectedPosition(null);
+    endMove();
   };
 
   const moveFigure = (fromPosition: CellPosition, toPosition: CellPosition) => {
@@ -148,6 +153,12 @@ const Board = () => {
       board[fromPosition.posX][fromPosition.posY];
     newBoard[fromPosition.posX][fromPosition.posY] = null;
     setBoard(newBoard);
+  };
+
+  const endMove = () => {
+    setCurrentMove(
+      currentMove === FigureColor.White ? FigureColor.Black : FigureColor.White,
+    );
   };
 
   return (
