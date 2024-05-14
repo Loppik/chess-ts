@@ -119,7 +119,9 @@ const Board = () => {
 
   const onCellClick = (posX: number, posY: number) => () => {
     if (!firstSelectedPosition) {
-      setFirstSelectedPosition({ posX, posY });
+      if (board[posX][posY]) {
+        setFirstSelectedPosition({ posX, posY });
+      }
       return;
     }
 
