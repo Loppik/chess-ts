@@ -5,7 +5,15 @@
         - [x] Add change the position of the selected figure
     - [x] Add alternately move system 
     - [ ] Add the ability to move the figure only in the correct way
-    - [ ] Add moves history
+        - [ ] Pawn
+        - [ ] Rook
+        - [ ] Knight
+        - [ ] Bishop
+        - [ ] Queen
+        - [ ] King
+- [ ] Add moves history
+- [ ] Add game end
+- [ ] Add move time
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

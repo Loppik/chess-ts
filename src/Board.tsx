@@ -1,39 +1,10 @@
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
-import { CELL_SIZE, FigureColor, FigureType } from './constants';
+import { CELL_SIZE, FigureColor } from './constants';
 import { IStyledComponentProps } from './interfaces';
-import { copyBoard, generateFigure } from './helpers';
+import { copyBoard, generateInitialBoard } from './helpers';
 import { TBoard, TFigure } from './types';
-
-const INITIAL_BOARD = [
-  [null, null, null, null, null, null, null, null],
-  [
-    generateFigure(FigureType.Pawn, FigureColor.Black),
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ],
-  [null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null],
-  [
-    null,
-    generateFigure(FigureType.Pawn, FigureColor.White),
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ],
-  [null, null, null, null, null, null, null, null],
-];
 
 const BORDER_SIZE = 5;
 const BORDER_COLOR_OF_THE_SELECTED_CELL = 'red';
@@ -113,7 +84,7 @@ const Cells = styled(
 
 type CellPosition = { posX: number; posY: number } | null;
 const Board = () => {
-  const [board, setBoard] = useState<TBoard>(INITIAL_BOARD);
+  const [board, setBoard] = useState<TBoard>(generateInitialBoard());
   const [firstSelectedPosition, setFirstSelectedPosition] =
     useState<CellPosition>(null);
   const [currentMove, setCurrentMove] = useState<FigureColor>(
