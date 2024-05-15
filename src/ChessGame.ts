@@ -22,7 +22,7 @@ class ChessGame {
     }
 
     if (
-      !ChessGame.checkIsCorrectMove(
+      !this.checkIsCorrectMove(
         this.getCell(fromPosition)!,
         fromPosition,
         toPosition,
@@ -39,7 +39,7 @@ class ChessGame {
     return true;
   }
 
-  static checkIsCorrectMove(
+  checkIsCorrectMove(
     figure: TFigure,
     fromPosition: TCellPosition,
     toPosition: TCellPosition,

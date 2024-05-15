@@ -89,7 +89,7 @@ const Cells = styled(
                   }
                   isPossibleMove={
                     isHighlightPossibleMoves && firstSelectedPosition
-                      ? ChessGame.checkIsCorrectMove(
+                      ? game.checkIsCorrectMove(
                           game.getCell(firstSelectedPosition)!,
                           firstSelectedPosition,
                           cellPosition,
