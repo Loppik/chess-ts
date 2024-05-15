@@ -22,7 +22,7 @@ class ChessGame {
     }
 
     if (
-      !this.checkIsCorrectMove(
+      !ChessGame.checkIsCorrectMove(
         this.getCell(fromPosition)!,
         fromPosition,
         toPosition,
@@ -39,11 +39,14 @@ class ChessGame {
     return true;
   }
 
-  checkIsCorrectMove(
+  static checkIsCorrectMove(
     figure: TFigure,
-    fromPosition: TCellPositionStrict,
-    toPosition: TCellPositionStrict,
+    fromPosition: TCellPosition,
+    toPosition: TCellPosition,
   ): boolean {
+    if (!fromPosition || !toPosition) {
+      return false;
+    }
     switch (figure.type) {
       case FigureType.Pawn: {
         if (figure.color === FigureColor.White) {
