@@ -7,15 +7,19 @@
     - [ ] Add the ability to move the figure only in the correct way
         - [x] Pawn
         - [x] Rook
+        - [ ] You cannot move to the position with figure of the same color
+        - [ ] You cannot move throw the figure
         - [ ] Knight
         - [ ] Bishop
         - [ ] Queen
         - [ ] King
+- [ ] When the figure is selected and user click on his other figure, the other figure should be selected 
 - [ ] Add moves history
 - [ ] Add game end
 - [ ] Add move time
 - [ ] Add check on check
 - [ ] Add debug mode (you can add/remove figures from the board, you can move figures anywhere, its board setup mode)
+- [ ] Add castling
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -7,27 +7,39 @@ import { convertBoardLayoutToPosition } from './helpers';
 import { TCellPosition, TCellPositionStrict, TFigure } from './types';
 import ChessGame from './ChessGame';
 
+const CellIsPossibleMoveMarker = styled.div`
+  position: absolute;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background: #8080806e;
+`;
 const BORDER_SIZE = 5;
 const BORDER_COLOR_OF_THE_SELECTED_CELL = 'red';
 interface ICellProps extends IStyledComponentProps {
   cellItem: TFigure | null;
   isBlack: boolean;
   isSelected: boolean;
+  isPossibleMove: boolean;
   onCellClick: () => void;
 }
-const Cell = styled(({ className, cellItem, onCellClick }: ICellProps) => {
-  return (
-    <div className={className} onClick={onCellClick}>
-      {cellItem && (
-        <img
-          src={`/figures/${cellItem.img}`}
-          alt={`${cellItem.color} ${cellItem.type}`}
-          style={{ width: '80%', height: '80%' }}
-        />
-      )}
-    </div>
-  );
-})`
+const Cell = styled(
+  ({ className, cellItem, isPossibleMove, onCellClick }: ICellProps) => {
+    return (
+      <div className={className} onClick={onCellClick}>
+        {cellItem && (
+          <img
+            src={`/figures/${cellItem.img}`}
+            alt={`${cellItem.color} ${cellItem.type}`}
+            style={{ width: '80%', height: '80%' }}
+          />
+        )}
+        {isPossibleMove && <CellIsPossibleMoveMarker />}
+      </div>
+    );
+  },
+)`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,15 +57,22 @@ const Cell = styled(({ className, cellItem, onCellClick }: ICellProps) => {
 `;
 
 interface ICellsProps extends IStyledComponentProps {
-  board: (TFigure | null)[][];
+  game: ChessGame;
   onCellClick: (cellPosition: TCellPositionStrict) => () => void;
   firstSelectedPosition: TCellPosition;
+  isHighlightPossibleMoves: boolean;
 }
 const Cells = styled(
-  ({ board, onCellClick, firstSelectedPosition, className }: ICellsProps) => {
+  ({
+    game,
+    onCellClick,
+    firstSelectedPosition,
+    isHighlightPossibleMoves,
+    className,
+  }: ICellsProps) => {
     return (
       <div className={className}>
-        {board.map((row, i) => (
+        {game.board.map((row, i) => (
           <div key={i} className="d-flex">
             {row.map((cellItem, j) => {
               const cellPosition = convertBoardLayoutToPosition(i, j);
@@ -66,6 +85,15 @@ const Cells = styled(
                     firstSelectedPosition
                       ? firstSelectedPosition.posX === cellPosition.posX &&
                         firstSelectedPosition.posY === cellPosition.posY
+                      : false
+                  }
+                  isPossibleMove={
+                    isHighlightPossibleMoves && firstSelectedPosition
+                      ? ChessGame.checkIsCorrectMove(
+                          game.getCell(firstSelectedPosition)!,
+                          firstSelectedPosition,
+                          cellPosition,
+                        )
                       : false
                   }
                   onCellClick={onCellClick(cellPosition)}
@@ -86,6 +114,7 @@ const BoardView = () => {
   const [game] = useState<ChessGame>(new ChessGame());
   const [firstSelectedPosition, setFirstSelectedPosition] =
     useState<TCellPosition>(null);
+  const [settings] = useState({ isHighlightPossibleMoves: true });
 
   const onCellClick = (cellPosition: TCellPositionStrict) => () => {
     if (!firstSelectedPosition) {
@@ -116,9 +145,10 @@ const BoardView = () => {
     <section>
       <BoardBorders>
         <Cells
-          board={game.board}
+          game={game}
           onCellClick={onCellClick}
           firstSelectedPosition={firstSelectedPosition}
+          isHighlightPossibleMoves={settings.isHighlightPossibleMoves}
         />
       </BoardBorders>
     </section>
