@@ -1,5 +1,5 @@
 import { FigureColor, FigureType } from './constants';
-import { TBoard, TFigure } from './types';
+import { TBoard, TCellPositionStrict, TFigure } from './types';
 
 export const capitalizeFirstLetter = (word: string): string =>
   word.charAt(0).toUpperCase() + word.slice(1);
@@ -65,5 +65,15 @@ export const generateInitialBoard = (): TBoard => [
   ],
 ];
 
-export const copyBoard = (board: TBoard): TBoard =>
-  board.map((row) => [...row]);
+export const convertBoardLayoutToPosition = (
+  row: number,
+  col: number,
+): TCellPositionStrict => {
+  return { posX: col, posY: 7 - row };
+};
+
+export const convertPositionToBoardLayout = (
+  cellPosition: TCellPositionStrict,
+): { row: number; col: number } => {
+  return { row: 7 - cellPosition.posY, col: cellPosition.posX };
+};

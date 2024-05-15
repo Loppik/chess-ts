@@ -14,6 +14,8 @@
 - [ ] Add moves history
 - [ ] Add game end
 - [ ] Add move time
+- [ ] Add check on check
+- [ ] Add debug mode (you can add/remove figures from the board, you can move figures anywhere, its board setup mode)
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

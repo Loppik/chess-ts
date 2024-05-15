@@ -1,12 +1,12 @@
 import React from 'react';
 import BoardBorders from './BoardBorders';
-import Board from './Board';
+import BoardView from './BoardView';
 
 function App() {
   return (
     <div className="App">
       <BoardBorders>
-        <Board />
+        <BoardView />
       </BoardBorders>
     </div>
   );

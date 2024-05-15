@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
-import { CELL_SIZE, FigureColor } from './constants';
+import { CELL_SIZE } from './constants';
 import { IStyledComponentProps } from './interfaces';
-import { copyBoard, generateInitialBoard } from './helpers';
-import { TBoard, TFigure } from './types';
+import { convertBoardLayoutToPosition } from './helpers';
+import { TCellPosition, TCellPositionStrict, TFigure } from './types';
+import ChessGame from './ChessGame';
 
 const BORDER_SIZE = 5;
 const BORDER_COLOR_OF_THE_SELECTED_CELL = 'red';
@@ -45,8 +46,8 @@ const Cell = styled(({ className, cellItem, onCellClick }: ICellProps) => {
 
 interface ICellsProps extends IStyledComponentProps {
   board: (TFigure | null)[][];
-  onCellClick: (posX: number, posY: number) => () => void;
-  firstSelectedPosition: CellPosition;
+  onCellClick: (cellPosition: TCellPositionStrict) => () => void;
+  firstSelectedPosition: TCellPosition;
 }
 const Cells = styled(
   ({ board, onCellClick, firstSelectedPosition, className }: ICellsProps) => {
@@ -55,8 +56,7 @@ const Cells = styled(
         {board.map((row, i) => (
           <div key={i} className="d-flex">
             {row.map((cellItem, j) => {
-              const posX = i,
-                posY = j;
+              const cellPosition = convertBoardLayoutToPosition(i, j);
               return (
                 <Cell
                   key={j}
@@ -64,11 +64,11 @@ const Cells = styled(
                   isBlack={(j + i) % 2 === 1}
                   isSelected={
                     firstSelectedPosition
-                      ? firstSelectedPosition.posX === posX &&
-                        firstSelectedPosition.posY === posY
+                      ? firstSelectedPosition.posX === cellPosition.posX &&
+                        firstSelectedPosition.posY === cellPosition.posY
                       : false
                   }
-                  onCellClick={onCellClick(posX, posY)}
+                  onCellClick={onCellClick(cellPosition)}
                 />
               );
             })}
@@ -82,61 +82,39 @@ const Cells = styled(
   grid-column: 2 / 10;
 `;
 
-type CellPosition = { posX: number; posY: number } | null;
-const Board = () => {
-  const [board, setBoard] = useState<TBoard>(generateInitialBoard());
+const BoardView = () => {
+  const [game] = useState<ChessGame>(new ChessGame());
   const [firstSelectedPosition, setFirstSelectedPosition] =
-    useState<CellPosition>(null);
-  const [currentMove, setCurrentMove] = useState<FigureColor>(
-    FigureColor.White,
-  );
+    useState<TCellPosition>(null);
 
-  const onCellClick = (posX: number, posY: number) => () => {
+  const onCellClick = (cellPosition: TCellPositionStrict) => () => {
     if (!firstSelectedPosition) {
-      const figure = board[posX][posY];
-      if (figure && figure.color === currentMove) {
-        setFirstSelectedPosition({ posX, posY });
+      const figure = game.getCell(cellPosition);
+      if (figure && figure.color === game.currentMove) {
+        setFirstSelectedPosition(cellPosition);
       }
       return;
     }
 
     if (
       firstSelectedPosition &&
-      posX === firstSelectedPosition.posX &&
-      posY === firstSelectedPosition.posY
+      firstSelectedPosition.posX === cellPosition.posX &&
+      firstSelectedPosition.posY === cellPosition.posY
     ) {
       setFirstSelectedPosition(null);
       return;
     }
 
-    moveFigure(firstSelectedPosition, { posX, posY });
+    game.moveFigure(firstSelectedPosition, cellPosition);
     setFirstSelectedPosition(null);
-    endMove();
-  };
-
-  const moveFigure = (fromPosition: CellPosition, toPosition: CellPosition) => {
-    if (!fromPosition || !toPosition) {
-      return;
-    }
-
-    const newBoard = copyBoard(board);
-    newBoard[toPosition.posX][toPosition.posY] =
-      board[fromPosition.posX][fromPosition.posY];
-    newBoard[fromPosition.posX][fromPosition.posY] = null;
-    setBoard(newBoard);
-  };
-
-  const endMove = () => {
-    setCurrentMove(
-      currentMove === FigureColor.White ? FigureColor.Black : FigureColor.White,
-    );
+    game.endMove();
   };
 
   return (
     <section>
       <BoardBorders>
         <Cells
-          board={board}
+          board={game.board}
           onCellClick={onCellClick}
           firstSelectedPosition={firstSelectedPosition}
         />
@@ -145,4 +123,4 @@ const Board = () => {
   );
 };
 
-export default Board;
+export default BoardView;
