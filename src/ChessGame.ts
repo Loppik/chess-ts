@@ -43,41 +43,45 @@ class ChessGame {
     figure: TFigure,
     fromPosition: TCellPositionStrict,
     toPosition: TCellPositionStrict,
-  ) {
-    if (figure.type === FigureType.Pawn) {
-      if (figure.color === FigureColor.White) {
-        const defaultMove =
-          toPosition.posX === fromPosition.posX &&
-          toPosition.posY === fromPosition.posY + 1;
+  ): boolean {
+    switch (figure.type) {
+      case FigureType.Pawn: {
+        if (figure.color === FigureColor.White) {
+          const defaultMove =
+            toPosition.posX === fromPosition.posX &&
+            toPosition.posY === fromPosition.posY + 1;
 
-        if (fromPosition.posY === 1) {
-          return (
-            defaultMove ||
-            (toPosition.posX === fromPosition.posX &&
-              toPosition.posY === fromPosition.posY + 2)
-          );
-        }
-        return defaultMove;
-      } else {
-        const defaultMove =
-          toPosition.posX === fromPosition.posX &&
-          toPosition.posY === fromPosition.posY - 1;
+          if (fromPosition.posY === 1) {
+            return (
+              defaultMove ||
+              (toPosition.posX === fromPosition.posX &&
+                toPosition.posY === fromPosition.posY + 2)
+            );
+          }
+          return defaultMove;
+        } else {
+          const defaultMove =
+            toPosition.posX === fromPosition.posX &&
+            toPosition.posY === fromPosition.posY - 1;
 
-        if (fromPosition.posY === 6) {
-          return (
-            defaultMove ||
-            (toPosition.posX === fromPosition.posX &&
-              toPosition.posY === fromPosition.posY - 2)
-          );
+          if (fromPosition.posY === 6) {
+            return (
+              defaultMove ||
+              (toPosition.posX === fromPosition.posX &&
+                toPosition.posY === fromPosition.posY - 2)
+            );
+          }
+          return defaultMove;
         }
-        return defaultMove;
       }
-    } else if (figure.type === FigureType.Rook) {
-      return (
-        toPosition.posX === fromPosition.posX ||
-        toPosition.posY === fromPosition.posY
-      );
+      case FigureType.Rook: {
+        return (
+          toPosition.posX === fromPosition.posX ||
+          toPosition.posY === fromPosition.posY
+        );
+      }
     }
+    return false;
   }
 
   endMove() {
