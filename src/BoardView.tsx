@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
-import { CELL_SIZE } from './constants';
+import { CELL_SIZE, FigureColor, FigureType } from './constants';
 import { IStyledComponentProps } from './interfaces';
 import { convertBoardLayoutToPosition } from './helpers';
 import { TCellPosition, TCellPositionStrict, TFigure } from './types';
@@ -105,9 +105,56 @@ const BoardView = () => {
       return;
     }
 
-    game.moveFigure(firstSelectedPosition, cellPosition);
-    setFirstSelectedPosition(null);
-    game.endMove();
+    if (
+      checkIsCorrectMove(
+        game.getCell(firstSelectedPosition)!,
+        firstSelectedPosition,
+        cellPosition,
+      )
+    ) {
+      game.moveFigure(firstSelectedPosition, cellPosition);
+      setFirstSelectedPosition(null);
+      game.endMove();
+    }
+  };
+
+  const checkIsCorrectMove = (
+    figure: TFigure,
+    fromPosition: TCellPosition,
+    toPosition: TCellPosition,
+  ) => {
+    if (!fromPosition || !toPosition) {
+      return false;
+    }
+    if (figure.type === FigureType.Pawn) {
+      if (figure.color === FigureColor.White) {
+        const defaultMove =
+          toPosition.posX === fromPosition.posX &&
+          toPosition.posY === fromPosition.posY + 1;
+
+        if (fromPosition.posY === 1) {
+          return (
+            defaultMove ||
+            (toPosition.posX === fromPosition.posX &&
+              toPosition.posY === fromPosition.posY + 2)
+          );
+        }
+        return defaultMove;
+      } else {
+        const defaultMove =
+          toPosition.posX === fromPosition.posX &&
+          toPosition.posY === fromPosition.posY - 1;
+
+        if (fromPosition.posY === 6) {
+          return (
+            defaultMove ||
+            (toPosition.posX === fromPosition.posX &&
+              toPosition.posY === fromPosition.posY - 2)
+          );
+        }
+        return defaultMove;
+      }
+    }
   };
 
   return (
