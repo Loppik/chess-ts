@@ -5,8 +5,8 @@
         - [x] Add change the position of the selected figure
     - [x] Add alternately move system 
     - [ ] Add the ability to move the figure only in the correct way
-        - [ ] Pawn
-        - [ ] Rook
+        - [x] Pawn
+        - [x] Rook
         - [ ] Knight
         - [ ] Bishop
         - [ ] Queen

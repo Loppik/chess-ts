@@ -154,6 +154,11 @@ const BoardView = () => {
         }
         return defaultMove;
       }
+    } else if (figure.type === FigureType.Rook) {
+      return (
+        toPosition.posX === fromPosition.posX ||
+        toPosition.posY === fromPosition.posY
+      );
     }
   };
 
