@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import BoardBorders from './BoardBorders';
 import { CELL_SIZE } from './constants';
@@ -60,6 +60,7 @@ interface ICellsProps extends IStyledComponentProps {
   game: ChessGame;
   onCellClick: (cellPosition: TCellPositionStrict) => () => void;
   firstSelectedPosition: TCellPosition;
+  possiblePositions: TCellPositionStrict[];
   isHighlightPossibleMoves: boolean;
 }
 const Cells = styled(
@@ -67,6 +68,7 @@ const Cells = styled(
     game,
     onCellClick,
     firstSelectedPosition,
+    possiblePositions,
     isHighlightPossibleMoves,
     className,
   }: ICellsProps) => {
@@ -88,13 +90,14 @@ const Cells = styled(
                       : false
                   }
                   isPossibleMove={
-                    isHighlightPossibleMoves && firstSelectedPosition
-                      ? game.checkIsCorrectMove(
-                          game.getCell(firstSelectedPosition)!,
-                          firstSelectedPosition,
-                          cellPosition,
-                        )
-                      : false
+                    isHighlightPossibleMoves &&
+                    Boolean(
+                      possiblePositions.find(
+                        (p) =>
+                          p.posX === cellPosition.posX &&
+                          p.posY === cellPosition.posY,
+                      ),
+                    )
                   }
                   onCellClick={onCellClick(cellPosition)}
                 />
@@ -114,7 +117,18 @@ const BoardView = () => {
   const [game] = useState<ChessGame>(new ChessGame());
   const [firstSelectedPosition, setFirstSelectedPosition] =
     useState<TCellPosition>(null);
+  const [possiblePositions, setPossiblePositions] = useState<
+    TCellPositionStrict[]
+  >([]);
   const [settings] = useState({ isHighlightPossibleMoves: true });
+
+  useEffect(() => {
+    if (firstSelectedPosition) {
+      setPossiblePositions(game.getPossiblePositions(firstSelectedPosition));
+    } else {
+      setPossiblePositions([]);
+    }
+  }, [firstSelectedPosition]);
 
   const onCellClick = (cellPosition: TCellPositionStrict) => () => {
     if (!firstSelectedPosition) {
@@ -148,6 +162,7 @@ const BoardView = () => {
           game={game}
           onCellClick={onCellClick}
           firstSelectedPosition={firstSelectedPosition}
+          possiblePositions={possiblePositions}
           isHighlightPossibleMoves={settings.isHighlightPossibleMoves}
         />
       </BoardBorders>

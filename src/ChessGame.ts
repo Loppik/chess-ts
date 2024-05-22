@@ -1,6 +1,6 @@
 import { convertPositionToBoardLayout, generateInitialBoard } from './helpers';
 import { FigureColor, FigureType } from './constants';
-import { TBoard, TCellPosition, TCellPositionStrict, TFigure } from './types';
+import { TBoard, TCellPosition, TCellPositionStrict } from './types';
 
 class ChessGame {
   public board: TBoard;
@@ -22,10 +22,8 @@ class ChessGame {
     }
 
     if (
-      !this.checkIsCorrectMove(
-        this.getCell(fromPosition)!,
-        fromPosition,
-        toPosition,
+      !this.getPossiblePositions(fromPosition).find(
+        (p) => p.posX === toPosition.posX && p.posY === toPosition.posY,
       )
     ) {
       return false;
@@ -39,59 +37,70 @@ class ChessGame {
     return true;
   }
 
-  checkIsCorrectMove(
-    figure: TFigure,
-    fromPosition: TCellPosition,
-    toPosition: TCellPosition,
-  ): boolean {
-    if (!fromPosition || !toPosition) {
-      return false;
-    }
-    switch (figure.type) {
-      case FigureType.Pawn: {
-        if (figure.color === FigureColor.White) {
-          const defaultMove =
-            toPosition.posX === fromPosition.posX &&
-            toPosition.posY === fromPosition.posY + 1;
-
-          if (fromPosition.posY === 1) {
-            return (
-              defaultMove ||
-              (toPosition.posX === fromPosition.posX &&
-                toPosition.posY === fromPosition.posY + 2)
-            );
-          }
-          return defaultMove;
-        } else {
-          const defaultMove =
-            toPosition.posX === fromPosition.posX &&
-            toPosition.posY === fromPosition.posY - 1;
-
-          if (fromPosition.posY === 6) {
-            return (
-              defaultMove ||
-              (toPosition.posX === fromPosition.posX &&
-                toPosition.posY === fromPosition.posY - 2)
-            );
-          }
-          return defaultMove;
-        }
-      }
-      case FigureType.Rook: {
-        return (
-          toPosition.posX === fromPosition.posX ||
-          toPosition.posY === fromPosition.posY
-        );
-      }
-    }
-    return false;
-  }
-
   endMove() {
     this.currentMove =
       this.currentMove === FigureColor.White
         ? FigureColor.Black
         : FigureColor.White;
+  }
+
+  getPossiblePositions(
+    fromPosition: TCellPositionStrict,
+  ): TCellPositionStrict[] {
+    const figure = this.getCell(fromPosition);
+    if (!figure) {
+      return [];
+    }
+
+    const addPosition = (
+      possiblePositions: TCellPositionStrict[],
+      position: TCellPositionStrict,
+    ): boolean => {
+      const cellItem = this.getCell(position);
+      if (cellItem && cellItem.color === figure.color) {
+        return false;
+      }
+      possiblePositions.push(position);
+      if (cellItem && cellItem.color !== figure.color) {
+        return false;
+      }
+      return true;
+    };
+    switch (figure.type) {
+      case FigureType.Rook: {
+        let possiblePositions: TCellPositionStrict[] = [];
+        // top
+        for (let i = fromPosition.posY + 1; i < 8; i++) {
+          const position = { posX: fromPosition.posX, posY: i };
+          if (!addPosition(possiblePositions, position)) {
+            break;
+          }
+        }
+        // right
+        for (let i = fromPosition.posX + 1; i < 8; i++) {
+          const position = { posX: i, posY: fromPosition.posY };
+          if (!addPosition(possiblePositions, position)) {
+            break;
+          }
+        }
+        // bottom
+        for (let i = fromPosition.posY - 1; i >= 0; i--) {
+          const position = { posX: fromPosition.posX, posY: i };
+          if (!addPosition(possiblePositions, position)) {
+            break;
+          }
+        }
+        // left
+        for (let i = fromPosition.posX - 1; i >= 0; i--) {
+          const position = { posX: i, posY: fromPosition.posY };
+          if (!addPosition(possiblePositions, position)) {
+            break;
+          }
+        }
+        return possiblePositions;
+      }
+    }
+    return [];
   }
 }
 
