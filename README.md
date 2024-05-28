@@ -11,7 +11,7 @@
         - [x] You cannot move throw the figure
         - [x] Knight
         - [x] Bishop
-        - [ ] Queen
+        - [x] Queen
         - [ ] King
 - [ ] When the figure is selected and user click on his other figure, the other figure should be selected 
 - [ ] Add moves history

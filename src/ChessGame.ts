@@ -4,7 +4,7 @@ import {
   generateInitialBoard,
 } from './helpers';
 import { FigureColor, FigureType } from './constants';
-import { TBoard, TCellPosition, TCellPositionStrict } from './types';
+import { TBoard, TCellPosition, TCellPositionStrict, TFigure } from './types';
 
 const createPos =
   (fromPosition: TCellPositionStrict) =>
@@ -57,8 +57,9 @@ class ChessGame {
 
   getPossiblePositions(
     fromPosition: TCellPositionStrict,
+    asFigure?: TFigure,
   ): TCellPositionStrict[] {
-    const figure = this.getCell(fromPosition);
+    const figure = asFigure || this.getCell(fromPosition);
     if (!figure) {
       return [];
     }
@@ -241,6 +242,22 @@ class ChessGame {
         );
         possiblePositions = possiblePositions.concat(
           getPossibleDiagonalPositionsForBishop(-1, -1),
+        );
+        return possiblePositions;
+      }
+      case FigureType.Queen: {
+        let possiblePositions: TCellPositionStrict[] = [];
+        possiblePositions = possiblePositions.concat(
+          this.getPossiblePositions(
+            fromPosition,
+            generateFigure(FigureType.Rook, figure.color),
+          ),
+        );
+        possiblePositions = possiblePositions.concat(
+          this.getPossiblePositions(
+            fromPosition,
+            generateFigure(FigureType.Bishop, figure.color),
+          ),
         );
         return possiblePositions;
       }
