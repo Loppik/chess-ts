@@ -1,4 +1,8 @@
-import { convertPositionToBoardLayout, generateInitialBoard } from './helpers';
+import {
+  convertPositionToBoardLayout,
+  generateFigure,
+  generateInitialBoard,
+} from './helpers';
 import { FigureColor, FigureType } from './constants';
 import { TBoard, TCellPosition, TCellPositionStrict } from './types';
 
@@ -59,20 +63,6 @@ class ChessGame {
       return [];
     }
 
-    const addPosition = (
-      possiblePositions: TCellPositionStrict[],
-      position: TCellPositionStrict,
-    ): boolean => {
-      const cellItem = this.getCell(position);
-      if (cellItem?.color === figure.color) {
-        return false;
-      }
-      possiblePositions.push(position);
-      if (cellItem?.color !== figure.color) {
-        return false;
-      }
-      return true;
-    };
     const addPositionPawn = (
       possiblePositions: TCellPositionStrict[],
       position: TCellPositionStrict,
@@ -150,34 +140,42 @@ class ChessGame {
       }
       case FigureType.Rook: {
         let possiblePositions: TCellPositionStrict[] = [];
-        // top
-        for (let i = fromPosition.posY + 1; i < 8; i++) {
-          const position = { posX: fromPosition.posX, posY: i };
-          if (!addPosition(possiblePositions, position)) {
-            break;
+        const getPossiblePositionsForRook = (
+          xDiff: number,
+          yDiff: number,
+        ): TCellPositionStrict[] => {
+          const newPossiblePositions = [];
+          let position = createPos(fromPosition)(xDiff, yDiff);
+          while (
+            position.posX >= 0 &&
+            position.posX < 8 &&
+            position.posY >= 0 &&
+            position.posY < 8
+          ) {
+            const cellItem = this.getCell(position);
+            if (cellItem) {
+              if (cellItem.color !== figure.color) {
+                newPossiblePositions.push(position);
+              }
+              break;
+            }
+            newPossiblePositions.push(position);
+            position = createPos(position)(xDiff, yDiff);
           }
-        }
-        // right
-        for (let i = fromPosition.posX + 1; i < 8; i++) {
-          const position = { posX: i, posY: fromPosition.posY };
-          if (!addPosition(possiblePositions, position)) {
-            break;
-          }
-        }
-        // bottom
-        for (let i = fromPosition.posY - 1; i >= 0; i--) {
-          const position = { posX: fromPosition.posX, posY: i };
-          if (!addPosition(possiblePositions, position)) {
-            break;
-          }
-        }
-        // left
-        for (let i = fromPosition.posX - 1; i >= 0; i--) {
-          const position = { posX: i, posY: fromPosition.posY };
-          if (!addPosition(possiblePositions, position)) {
-            break;
-          }
-        }
+          return newPossiblePositions;
+        };
+        possiblePositions = possiblePositions.concat(
+          getPossiblePositionsForRook(1, 0),
+        );
+        possiblePositions = possiblePositions.concat(
+          getPossiblePositionsForRook(-1, 0),
+        );
+        possiblePositions = possiblePositions.concat(
+          getPossiblePositionsForRook(0, 1),
+        );
+        possiblePositions = possiblePositions.concat(
+          getPossiblePositionsForRook(0, -1),
+        );
         return possiblePositions;
       }
       case FigureType.Knight: {
