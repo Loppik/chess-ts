@@ -57,16 +57,90 @@ class ChessGame {
       position: TCellPositionStrict,
     ): boolean => {
       const cellItem = this.getCell(position);
-      if (cellItem && cellItem.color === figure.color) {
+      if (cellItem?.color === figure.color) {
         return false;
       }
       possiblePositions.push(position);
-      if (cellItem && cellItem.color !== figure.color) {
+      if (cellItem?.color !== figure.color) {
         return false;
       }
       return true;
     };
+    const addPositionPawn = (
+      possiblePositions: TCellPositionStrict[],
+      position: TCellPositionStrict,
+    ): void => {
+      if (this.getCell(position)?.color === figure.color) {
+        return;
+      }
+      possiblePositions.push(position);
+    };
     switch (figure.type) {
+      case FigureType.Pawn: {
+        let possibleEmptyPositions: TCellPositionStrict[] = [];
+        if (figure.color === FigureColor.White) {
+          addPositionPawn(possibleEmptyPositions, {
+            posX: fromPosition.posX,
+            posY: fromPosition.posY + 1,
+          });
+          if (fromPosition.posY === 1) {
+            addPositionPawn(possibleEmptyPositions, {
+              posX: fromPosition.posX,
+              posY: fromPosition.posY + 2,
+            });
+          }
+        } else {
+          addPositionPawn(possibleEmptyPositions, {
+            posX: fromPosition.posX,
+            posY: fromPosition.posY - 1,
+          });
+          if (fromPosition.posY === 6) {
+            addPositionPawn(possibleEmptyPositions, {
+              posX: fromPosition.posX,
+              posY: fromPosition.posY - 2,
+            });
+          }
+        }
+        let possibleAttackPositions: TCellPositionStrict[] = [];
+        const filterAttackPositionsByPossibleMove = (
+          figureColor: FigureColor,
+          attackPositions: TCellPositionStrict[],
+        ): TCellPositionStrict[] => {
+          return attackPositions.filter((pos) => {
+            const figure = this.getCell(pos);
+            return figure && figure.color !== figureColor;
+          });
+        };
+        if (figure.color === FigureColor.White) {
+          possibleAttackPositions = possibleAttackPositions.concat(
+            filterAttackPositionsByPossibleMove(FigureColor.White, [
+              {
+                posX: fromPosition.posX + 1,
+                posY: fromPosition.posY + 1,
+              },
+              {
+                posX: fromPosition.posX - 1,
+                posY: fromPosition.posY + 1,
+              },
+            ]),
+          );
+        } else {
+          possibleAttackPositions = possibleAttackPositions.concat(
+            filterAttackPositionsByPossibleMove(FigureColor.Black, [
+              {
+                posX: fromPosition.posX + 1,
+                posY: fromPosition.posY - 1,
+              },
+              {
+                posX: fromPosition.posX - 1,
+                posY: fromPosition.posY - 1,
+              },
+            ]),
+          );
+        }
+
+        return possibleEmptyPositions.concat(possibleAttackPositions);
+      }
       case FigureType.Rook: {
         let possiblePositions: TCellPositionStrict[] = [];
         // top
