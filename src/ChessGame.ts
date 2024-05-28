@@ -66,226 +66,139 @@ class ChessGame {
 
     switch (figure.type) {
       case FigureType.Pawn: {
-        let possibleEmptyPositions: TCellPositionStrict[] = [];
-        const addPositionPawn = (
-          possiblePositions: TCellPositionStrict[],
-          position: TCellPositionStrict,
-        ): void => {
-          if (this.getCell(position)?.color === figure.color) {
-            return;
-          }
-          possiblePositions.push(position);
-        };
-        if (figure.color === FigureColor.White) {
-          addPositionPawn(possibleEmptyPositions, {
-            posX: fromPosition.posX,
-            posY: fromPosition.posY + 1,
-          });
-          if (fromPosition.posY === 1) {
-            addPositionPawn(possibleEmptyPositions, {
-              posX: fromPosition.posX,
-              posY: fromPosition.posY + 2,
-            });
-          }
-        } else {
-          addPositionPawn(possibleEmptyPositions, {
-            posX: fromPosition.posX,
-            posY: fromPosition.posY - 1,
-          });
-          if (fromPosition.posY === 6) {
-            addPositionPawn(possibleEmptyPositions, {
-              posX: fromPosition.posX,
-              posY: fromPosition.posY - 2,
-            });
-          }
-        }
-        let possibleAttackPositions: TCellPositionStrict[] = [];
-        const filterAttackPositionsByPossibleMove = (
-          figureColor: FigureColor,
-          attackPositions: TCellPositionStrict[],
-        ): TCellPositionStrict[] => {
-          return attackPositions.filter((pos) => {
-            const figure = this.getCell(pos);
-            return figure && figure.color !== figureColor;
-          });
-        };
-        if (figure.color === FigureColor.White) {
-          possibleAttackPositions = possibleAttackPositions.concat(
-            filterAttackPositionsByPossibleMove(FigureColor.White, [
-              {
-                posX: fromPosition.posX + 1,
-                posY: fromPosition.posY + 1,
-              },
-              {
-                posX: fromPosition.posX - 1,
-                posY: fromPosition.posY + 1,
-              },
-            ]),
-          );
-        } else {
-          possibleAttackPositions = possibleAttackPositions.concat(
-            filterAttackPositionsByPossibleMove(FigureColor.Black, [
-              {
-                posX: fromPosition.posX + 1,
-                posY: fromPosition.posY - 1,
-              },
-              {
-                posX: fromPosition.posX - 1,
-                posY: fromPosition.posY - 1,
-              },
-            ]),
-          );
-        }
-
-        return possibleEmptyPositions.concat(possibleAttackPositions);
-      }
-      case FigureType.Rook: {
-        let possiblePositions: TCellPositionStrict[] = [];
-        const getPossiblePositionsForRook = (
-          xDiff: number,
-          yDiff: number,
-        ): TCellPositionStrict[] => {
-          const newPossiblePositions = [];
-          let position = createPos(fromPosition)(xDiff, yDiff);
-          while (
-            position.posX >= 0 &&
-            position.posX < 8 &&
-            position.posY >= 0 &&
-            position.posY < 8
+        const newPossiblePositions = [];
+        const yDirection = figure.color === FigureColor.White ? 1 : -1;
+        const position = createPos(fromPosition)(0, yDirection);
+        if (!this.getCell(position)) {
+          newPossiblePositions.push(position);
+          if (
+            (figure.color === FigureColor.White && fromPosition.posY === 1) ||
+            (figure.color === FigureColor.Black && fromPosition.posY === 6)
           ) {
-            const cellItem = this.getCell(position);
-            if (cellItem) {
-              if (cellItem.color !== figure.color) {
-                newPossiblePositions.push(position);
-              }
-              break;
+            const position2 = createPos(fromPosition)(0, yDirection * 2);
+            if (!this.getCell(position2)) {
+              newPossiblePositions.push(position2);
             }
-            newPossiblePositions.push(position);
-            position = createPos(position)(xDiff, yDiff);
           }
-          return newPossiblePositions;
-        };
-        possiblePositions = possiblePositions.concat(
-          getPossiblePositionsForRook(1, 0),
-        );
-        possiblePositions = possiblePositions.concat(
-          getPossiblePositionsForRook(-1, 0),
-        );
-        possiblePositions = possiblePositions.concat(
-          getPossiblePositionsForRook(0, 1),
-        );
-        possiblePositions = possiblePositions.concat(
-          getPossiblePositionsForRook(0, -1),
-        );
-        return possiblePositions;
+        }
+        const leftAttackPosition = createPos(fromPosition)(-1, yDirection);
+        const leftAttackCell = this.getCell(leftAttackPosition);
+        if (leftAttackCell && leftAttackCell.color !== figure.color) {
+          newPossiblePositions.push(leftAttackPosition);
+        }
+        const rightAttackPosition = createPos(fromPosition)(1, yDirection);
+        const rightAttackCell = this.getCell(rightAttackPosition);
+        if (rightAttackCell && rightAttackCell.color !== figure.color) {
+          newPossiblePositions.push(rightAttackPosition);
+        }
+        return newPossiblePositions;
+      }
+      case FigureType.Rook:
+      case FigureType.Bishop: {
+        const getPossibleOneDirectionPositions =
+          (fromPosition: TCellPositionStrict) =>
+          (xDiff: number, yDiff: number): TCellPositionStrict[] => {
+            const newPossiblePositions = [];
+            let position = createPos(fromPosition)(xDiff, yDiff);
+            while (
+              position.posX >= 0 &&
+              position.posX < 8 &&
+              position.posY >= 0 &&
+              position.posY < 8
+            ) {
+              const cellItem = this.getCell(position);
+              if (cellItem) {
+                if (cellItem.color !== figure.color) {
+                  newPossiblePositions.push(position);
+                }
+                break;
+              }
+              newPossiblePositions.push(position);
+              position = createPos(position)(xDiff, yDiff);
+            }
+            return newPossiblePositions;
+          };
+        const getPossibleOneDirectionPositionsFromPosition =
+          getPossibleOneDirectionPositions(fromPosition);
+        if (figure.type === FigureType.Rook) {
+          return [
+            ...getPossibleOneDirectionPositionsFromPosition(1, 0),
+            ...getPossibleOneDirectionPositionsFromPosition(-1, 0),
+            ...getPossibleOneDirectionPositionsFromPosition(0, 1),
+            ...getPossibleOneDirectionPositionsFromPosition(0, -1),
+          ];
+        }
+        if (figure.type == FigureType.Bishop) {
+          return [
+            ...getPossibleOneDirectionPositionsFromPosition(1, 1),
+            ...getPossibleOneDirectionPositionsFromPosition(1, -1),
+            ...getPossibleOneDirectionPositionsFromPosition(-1, 1),
+            ...getPossibleOneDirectionPositionsFromPosition(-1, -1),
+          ];
+        }
+        break;
       }
       case FigureType.Knight: {
-        let possiblePositions: TCellPositionStrict[] = [];
-        const addPositionKnight = (
+        const getPossibleKnightPosition = (
           x: number,
           y: number,
-          possiblePositions: TCellPositionStrict[],
-        ): TCellPositionStrict[] => {
+        ): TCellPosition => {
           const position = createPos(fromPosition)(x, y);
           const cellItem = this.getCell(position);
           if (
             cellItem ? cellItem.color === figure.color : cellItem === undefined
           ) {
-            return possiblePositions;
+            return null;
           }
-          return possiblePositions.concat(position);
+          return position;
         };
-        possiblePositions = addPositionKnight(2, 1, possiblePositions);
-        possiblePositions = addPositionKnight(2, -1, possiblePositions);
-        possiblePositions = addPositionKnight(-2, 1, possiblePositions);
-        possiblePositions = addPositionKnight(-2, -1, possiblePositions);
-        possiblePositions = addPositionKnight(1, 2, possiblePositions);
-        possiblePositions = addPositionKnight(1, -2, possiblePositions);
-        possiblePositions = addPositionKnight(-1, 2, possiblePositions);
-        possiblePositions = addPositionKnight(-1, -2, possiblePositions);
-        return possiblePositions;
-      }
-      case FigureType.Bishop: {
-        let possiblePositions: TCellPositionStrict[] = [];
-        const getPossibleDiagonalPositionsForBishop = (
-          xDiff: number,
-          yDiff: number,
-        ): TCellPositionStrict[] => {
-          const newPossiblePositions = [];
-          let position = createPos(fromPosition)(xDiff, yDiff);
-          while (
-            position.posX >= 0 &&
-            position.posX < 8 &&
-            position.posY >= 0 &&
-            position.posY < 8
-          ) {
-            const cellItem = this.getCell(position);
-            if (cellItem) {
-              if (cellItem.color !== figure.color) {
-                newPossiblePositions.push(position);
-              }
-              break;
-            }
-            newPossiblePositions.push(position);
-            position = createPos(position)(xDiff, yDiff);
-          }
-          return newPossiblePositions;
-        };
-        possiblePositions = possiblePositions.concat(
-          getPossibleDiagonalPositionsForBishop(1, 1),
-        );
-        possiblePositions = possiblePositions.concat(
-          getPossibleDiagonalPositionsForBishop(1, -1),
-        );
-        possiblePositions = possiblePositions.concat(
-          getPossibleDiagonalPositionsForBishop(-1, 1),
-        );
-        possiblePositions = possiblePositions.concat(
-          getPossibleDiagonalPositionsForBishop(-1, -1),
-        );
-        return possiblePositions;
+        return [
+          getPossibleKnightPosition(2, 1),
+          getPossibleKnightPosition(2, -1),
+          getPossibleKnightPosition(-2, 1),
+          getPossibleKnightPosition(-2, -1),
+          getPossibleKnightPosition(1, 2),
+          getPossibleKnightPosition(1, -2),
+          getPossibleKnightPosition(-1, 2),
+          getPossibleKnightPosition(-1, -2),
+        ].filter(Boolean) as TCellPositionStrict[];
       }
       case FigureType.Queen: {
-        let possiblePositions: TCellPositionStrict[] = [];
-        possiblePositions = possiblePositions.concat(
-          this.getPossiblePositions(
+        return [
+          ...this.getPossiblePositions(
             fromPosition,
             generateFigure(FigureType.Rook, figure.color),
           ),
-        );
-        possiblePositions = possiblePositions.concat(
-          this.getPossiblePositions(
+          ...this.getPossiblePositions(
             fromPosition,
             generateFigure(FigureType.Bishop, figure.color),
           ),
-        );
-        return possiblePositions;
+        ];
       }
       case FigureType.King: {
-        let possiblePositions: TCellPositionStrict[] = [];
-        const addPositionKing = (
+        const getPossibleKingPosition = (
           x: number,
           y: number,
-          possiblePositions: TCellPositionStrict[],
-        ): TCellPositionStrict[] => {
+        ): TCellPosition => {
           const position = createPos(fromPosition)(x, y);
           const cellItem = this.getCell(position);
           if (
             cellItem ? cellItem.color === figure.color : cellItem === undefined
           ) {
-            return possiblePositions;
+            return null;
           }
-          return possiblePositions.concat(position);
+          return position;
         };
-        possiblePositions = addPositionKing(1, 1, possiblePositions);
-        possiblePositions = addPositionKing(1, 0, possiblePositions);
-        possiblePositions = addPositionKing(1, -1, possiblePositions);
-        possiblePositions = addPositionKing(0, 1, possiblePositions);
-        possiblePositions = addPositionKing(0, -1, possiblePositions);
-        possiblePositions = addPositionKing(-1, 1, possiblePositions);
-        possiblePositions = addPositionKing(-1, 0, possiblePositions);
-        possiblePositions = addPositionKing(-1, -1, possiblePositions);
-        return possiblePositions;
+        return [
+          getPossibleKingPosition(1, 1),
+          getPossibleKingPosition(1, 0),
+          getPossibleKingPosition(1, -1),
+          getPossibleKingPosition(0, 1),
+          getPossibleKingPosition(0, -1),
+          getPossibleKingPosition(-1, 1),
+          getPossibleKingPosition(-1, 0),
+          getPossibleKingPosition(-1, -1),
+        ].filter(Boolean) as TCellPositionStrict[];
       }
     }
     return [];

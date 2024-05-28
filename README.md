@@ -4,7 +4,7 @@
         - [x] Add figure selection
         - [x] Add change the position of the selected figure
     - [x] Add alternately move system 
-    - [ ] Add the ability to move the figure only in the correct way
+    - [x] Add the ability to move the figure only in the correct way
         - [x] Pawn
         - [x] Rook
         - [x] You cannot move to the position with figure of the same color
