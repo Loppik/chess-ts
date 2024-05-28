@@ -206,6 +206,46 @@ class ChessGame {
         possiblePositions = addPositionKnight(-1, -2, possiblePositions);
         return possiblePositions;
       }
+      case FigureType.Bishop: {
+        let possiblePositions: TCellPositionStrict[] = [];
+        const getPossibleDiagonalPositionsForBishop = (
+          xDiff: number,
+          yDiff: number,
+        ): TCellPositionStrict[] => {
+          const newPossiblePositions = [];
+          let position = createPos(fromPosition)(xDiff, yDiff);
+          while (
+            position.posX >= 0 &&
+            position.posX < 8 &&
+            position.posY >= 0 &&
+            position.posY < 8
+          ) {
+            const cellItem = this.getCell(position);
+            if (cellItem) {
+              if (cellItem.color !== figure.color) {
+                newPossiblePositions.push(position);
+              }
+              break;
+            }
+            newPossiblePositions.push(position);
+            position = createPos(position)(xDiff, yDiff);
+          }
+          return newPossiblePositions;
+        };
+        possiblePositions = possiblePositions.concat(
+          getPossibleDiagonalPositionsForBishop(1, 1),
+        );
+        possiblePositions = possiblePositions.concat(
+          getPossibleDiagonalPositionsForBishop(1, -1),
+        );
+        possiblePositions = possiblePositions.concat(
+          getPossibleDiagonalPositionsForBishop(-1, 1),
+        );
+        possiblePositions = possiblePositions.concat(
+          getPossibleDiagonalPositionsForBishop(-1, -1),
+        );
+        return possiblePositions;
+      }
     }
     return [];
   }

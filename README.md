@@ -10,7 +10,7 @@
         - [x] You cannot move to the position with figure of the same color
         - [x] You cannot move throw the figure
         - [x] Knight
-        - [ ] Bishop
+        - [x] Bishop
         - [ ] Queen
         - [ ] King
 - [ ] When the figure is selected and user click on his other figure, the other figure should be selected 
