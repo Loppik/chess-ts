@@ -63,18 +63,18 @@ class ChessGame {
       return [];
     }
 
-    const addPositionPawn = (
-      possiblePositions: TCellPositionStrict[],
-      position: TCellPositionStrict,
-    ): void => {
-      if (this.getCell(position)?.color === figure.color) {
-        return;
-      }
-      possiblePositions.push(position);
-    };
     switch (figure.type) {
       case FigureType.Pawn: {
         let possibleEmptyPositions: TCellPositionStrict[] = [];
+        const addPositionPawn = (
+          possiblePositions: TCellPositionStrict[],
+          position: TCellPositionStrict,
+        ): void => {
+          if (this.getCell(position)?.color === figure.color) {
+            return;
+          }
+          possiblePositions.push(position);
+        };
         if (figure.color === FigureColor.White) {
           addPositionPawn(possibleEmptyPositions, {
             posX: fromPosition.posX,
