@@ -139,13 +139,20 @@ const BoardView = () => {
       return;
     }
 
-    if (
-      firstSelectedPosition &&
-      firstSelectedPosition.posX === cellPosition.posX &&
-      firstSelectedPosition.posY === cellPosition.posY
-    ) {
-      setFirstSelectedPosition(null);
-      return;
+    if (firstSelectedPosition) {
+      if (
+        cellPosition.posX === firstSelectedPosition.posX &&
+        cellPosition.posY === firstSelectedPosition.posY
+      ) {
+        setFirstSelectedPosition(null);
+        return;
+      } else {
+        const cellItem = game.getCell(cellPosition);
+        if (cellItem && cellItem.color === game.currentMove) {
+          setFirstSelectedPosition(cellPosition);
+          return;
+        }
+      }
     }
 
     const isMoved = game.moveFigure(firstSelectedPosition, cellPosition);

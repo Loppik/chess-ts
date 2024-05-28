@@ -13,7 +13,7 @@
         - [x] Bishop
         - [x] Queen
         - [x] King
-- [ ] When the figure is selected and user click on his other figure, the other figure should be selected 
+- [x] When the figure is selected and user click on his other figure, the other figure should be selected 
 - [ ] Add moves history
 - [ ] Add game end
 - [ ] Add move time
