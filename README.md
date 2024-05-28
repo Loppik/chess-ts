@@ -7,9 +7,9 @@
     - [ ] Add the ability to move the figure only in the correct way
         - [x] Pawn
         - [x] Rook
-        - [ ] You cannot move to the position with figure of the same color
-        - [ ] You cannot move throw the figure
-        - [ ] Knight
+        - [x] You cannot move to the position with figure of the same color
+        - [x] You cannot move throw the figure
+        - [x] Knight
         - [ ] Bishop
         - [ ] Queen
         - [ ] King

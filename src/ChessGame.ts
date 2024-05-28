@@ -2,6 +2,13 @@ import { convertPositionToBoardLayout, generateInitialBoard } from './helpers';
 import { FigureColor, FigureType } from './constants';
 import { TBoard, TCellPosition, TCellPositionStrict } from './types';
 
+const createPos =
+  (fromPosition: TCellPositionStrict) =>
+  (xDiff: number, yDiff: number): TCellPositionStrict => ({
+    posX: fromPosition.posX + xDiff,
+    posY: fromPosition.posY + yDiff,
+  });
+
 class ChessGame {
   public board: TBoard;
   public currentMove: FigureColor;
@@ -13,7 +20,7 @@ class ChessGame {
 
   getCell(cellPosition: TCellPositionStrict) {
     const { row, col } = convertPositionToBoardLayout(cellPosition);
-    return this.board[row][col];
+    return this.board[row]?.[col];
   }
 
   moveFigure(fromPosition: TCellPosition, toPosition: TCellPosition): boolean {
@@ -171,6 +178,32 @@ class ChessGame {
             break;
           }
         }
+        return possiblePositions;
+      }
+      case FigureType.Knight: {
+        let possiblePositions: TCellPositionStrict[] = [];
+        const addPositionKnight = (
+          x: number,
+          y: number,
+          possiblePositions: TCellPositionStrict[],
+        ): TCellPositionStrict[] => {
+          const position = createPos(fromPosition)(x, y);
+          const cellItem = this.getCell(position);
+          if (
+            cellItem ? cellItem.color === figure.color : cellItem === undefined
+          ) {
+            return possiblePositions;
+          }
+          return possiblePositions.concat(position);
+        };
+        possiblePositions = addPositionKnight(2, 1, possiblePositions);
+        possiblePositions = addPositionKnight(2, -1, possiblePositions);
+        possiblePositions = addPositionKnight(-2, 1, possiblePositions);
+        possiblePositions = addPositionKnight(-2, -1, possiblePositions);
+        possiblePositions = addPositionKnight(1, 2, possiblePositions);
+        possiblePositions = addPositionKnight(1, -2, possiblePositions);
+        possiblePositions = addPositionKnight(-1, 2, possiblePositions);
+        possiblePositions = addPositionKnight(-1, -2, possiblePositions);
         return possiblePositions;
       }
     }
