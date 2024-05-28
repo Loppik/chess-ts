@@ -261,6 +261,32 @@ class ChessGame {
         );
         return possiblePositions;
       }
+      case FigureType.King: {
+        let possiblePositions: TCellPositionStrict[] = [];
+        const addPositionKing = (
+          x: number,
+          y: number,
+          possiblePositions: TCellPositionStrict[],
+        ): TCellPositionStrict[] => {
+          const position = createPos(fromPosition)(x, y);
+          const cellItem = this.getCell(position);
+          if (
+            cellItem ? cellItem.color === figure.color : cellItem === undefined
+          ) {
+            return possiblePositions;
+          }
+          return possiblePositions.concat(position);
+        };
+        possiblePositions = addPositionKing(1, 1, possiblePositions);
+        possiblePositions = addPositionKing(1, 0, possiblePositions);
+        possiblePositions = addPositionKing(1, -1, possiblePositions);
+        possiblePositions = addPositionKing(0, 1, possiblePositions);
+        possiblePositions = addPositionKing(0, -1, possiblePositions);
+        possiblePositions = addPositionKing(-1, 1, possiblePositions);
+        possiblePositions = addPositionKing(-1, 0, possiblePositions);
+        possiblePositions = addPositionKing(-1, -1, possiblePositions);
+        return possiblePositions;
+      }
     }
     return [];
   }
