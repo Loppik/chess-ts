@@ -4,7 +4,7 @@ import BoardBorders from './BoardBorders';
 import { CELL_SIZE } from './constants';
 import { IStyledComponentProps } from './interfaces';
 import { convertBoardLayoutToPosition } from './helpers';
-import { TCellPosition, TCellPositionStrict, TFigure } from './types';
+import { TCellItem, TCellPosition, TCellPositionStrict } from './types';
 import ChessGame from './ChessGame';
 
 const CellIsPossibleMoveMarker = styled.div`
@@ -17,7 +17,7 @@ const CellIsPossibleMoveMarker = styled.div`
 const BORDER_SIZE = 5;
 const BORDER_COLOR_OF_THE_SELECTED_CELL = 'red';
 interface ICellProps extends IStyledComponentProps {
-  cellItem: TFigure | null;
+  cellItem: TCellItem;
   isBlack: boolean;
   isSelected: boolean;
   isPossibleMove: boolean;

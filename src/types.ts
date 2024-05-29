@@ -7,6 +7,6 @@ export type TFigure = {
 };
 export type TCellItem = TFigure | null;
 
-export type TBoard = Array<Array<TFigure | null>>;
+export type TBoard = Array<Array<TCellItem>>;
 export type TCellPositionStrict = { posX: number; posY: number };
 export type TCellPosition = TCellPositionStrict | null;
