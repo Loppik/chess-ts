@@ -114,7 +114,9 @@ const Cells = styled(
 `;
 
 const BoardView = () => {
-  const [game] = useState<ChessGame>(new ChessGame());
+  const [game] = useState<ChessGame>(() => {
+    return new ChessGame();
+  });
   const [firstSelectedPosition, setFirstSelectedPosition] =
     useState<TCellPosition>(null);
   const [possiblePositions, setPossiblePositions] = useState<
