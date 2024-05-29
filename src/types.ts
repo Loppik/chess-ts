@@ -5,6 +5,7 @@ export type TFigure = {
   color: FigureColor;
   img: string;
 };
+export type TCellItem = TFigure | null;
 
 export type TBoard = Array<Array<TFigure | null>>;
 export type TCellPositionStrict = { posX: number; posY: number };

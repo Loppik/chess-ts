@@ -4,7 +4,14 @@ import {
   generateInitialBoard,
 } from './helpers';
 import { FigureColor, FigureType } from './constants';
-import { TBoard, TCellPosition, TCellPositionStrict, TFigure } from './types';
+import {
+  TBoard,
+  TCellItem,
+  TCellPosition,
+  TCellPositionStrict,
+  TFigure,
+} from './types';
+import History, { Move } from './History';
 
 const createPos =
   (fromPosition: TCellPositionStrict) =>
@@ -16,13 +23,15 @@ const createPos =
 class ChessGame {
   public board: TBoard;
   public currentMove: FigureColor;
+  public history: History;
 
   constructor() {
     this.board = generateInitialBoard();
     this.currentMove = FigureColor.White;
+    this.history = new History();
   }
 
-  getCell(cellPosition: TCellPositionStrict) {
+  getCell(cellPosition: TCellPositionStrict): TCellItem {
     const { row, col } = convertPositionToBoardLayout(cellPosition);
     return this.board[row]?.[col];
   }
@@ -39,6 +48,8 @@ class ChessGame {
     ) {
       return false;
     }
+
+    this.addMoveToHistory(fromPosition, toPosition);
 
     const toPositionLayout = convertPositionToBoardLayout(toPosition);
     const fromPositionLayout = convertPositionToBoardLayout(fromPosition);
@@ -202,6 +213,20 @@ class ChessGame {
       }
     }
     return [];
+  }
+
+  addMoveToHistory(
+    fromPosition: TCellPositionStrict,
+    toPosition: TCellPositionStrict,
+  ) {
+    this.history.addMove(
+      new Move(
+        fromPosition,
+        toPosition,
+        this.getCell(fromPosition)!,
+        this.getCell(toPosition),
+      ),
+    );
   }
 }
 

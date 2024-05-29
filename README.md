@@ -14,7 +14,7 @@
         - [x] Queen
         - [x] King
 - [x] When the figure is selected and user click on his other figure, the other figure should be selected 
-- [ ] Add moves history
+- [ ] Add moves history in PGN format
 - [ ] Add game end
 - [ ] Add move time
 - [ ] Add check on check
