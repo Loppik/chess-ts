@@ -7,17 +7,21 @@ export class Move {
   public fromFigure: TFigure;
   public toCellItem: TCellItem;
   public number?: number;
+  public isPossibleWithAnotherFigureWithTheSameType: boolean;
 
   constructor(
     fromPosition: TCellPositionStrict,
     toPosition: TCellPositionStrict,
     fromFigure: TFigure,
     toCellItem: TCellItem,
+    isPossibleWithAnotherFigureWithTheSameType: boolean = false,
   ) {
     this.fromPosition = fromPosition;
     this.toPosition = toPosition;
     this.fromFigure = fromFigure;
     this.toCellItem = toCellItem;
+    this.isPossibleWithAnotherFigureWithTheSameType =
+      isPossibleWithAnotherFigureWithTheSameType;
   }
 
   setMoveNumber(number: number) {
@@ -54,9 +58,13 @@ class History {
         );
       }
 
+      const specifyingWhichFigureMadeTheMove =
+        move.isPossibleWithAnotherFigureWithTheSameType
+          ? this.getPositionFile(move.fromPosition)
+          : '';
       return (
         res +
-        `${this.convertFigureToPGN(move.fromFigure)}${this.convertPositionToPGN(move.toPosition)} `
+        `${this.convertFigureToPGN(move.fromFigure)}${specifyingWhichFigureMadeTheMove}${this.convertPositionToPGN(move.toPosition)} `
       );
     }, '');
   }

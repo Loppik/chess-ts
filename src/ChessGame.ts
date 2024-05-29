@@ -1,4 +1,5 @@
 import {
+  convertBoardLayoutToPosition,
   convertPositionToBoardLayout,
   generateFigure,
   generateInitialBoard,
@@ -215,16 +216,55 @@ class ChessGame {
     return [];
   }
 
+  findPositionsOfFigures(
+    condition: (cellItem: TCellItem) => boolean,
+  ): TCellPositionStrict[] {
+    const positions: TCellPositionStrict[] = [];
+    this.board.forEach((row, rowIndex) => {
+      row.forEach((cellItem, colIndex) => {
+        if (condition(cellItem)) {
+          positions.push(convertBoardLayoutToPosition(rowIndex, colIndex));
+        }
+      });
+    });
+    return positions;
+  }
+
+  getIsMovePossibleWithAnotherFigureWithTheSameType = (
+    figure: TFigure,
+    toPosition: TCellPositionStrict,
+  ) => {
+    const positionsOfTheSameTypeFigures = this.findPositionsOfFigures(
+      (cellItem) =>
+        cellItem?.type === figure.type && cellItem.color === figure.color,
+    );
+    const positionsOfTheSameTypeFiguresThatCanDoTheSameMove =
+      positionsOfTheSameTypeFigures.filter((position) => {
+        return this.getPossiblePositions(position).find(
+          (possiblePos) =>
+            possiblePos.posX === toPosition.posX &&
+            possiblePos.posY === toPosition.posY,
+        );
+      });
+    return positionsOfTheSameTypeFiguresThatCanDoTheSameMove.length > 1;
+  };
+
   addMoveToHistory(
     fromPosition: TCellPositionStrict,
     toPosition: TCellPositionStrict,
   ) {
+    const fromFigure = this.getCell(fromPosition)!;
+
     this.history.addMove(
       new Move(
         fromPosition,
         toPosition,
-        this.getCell(fromPosition)!,
+        fromFigure,
         this.getCell(toPosition),
+        this.getIsMovePossibleWithAnotherFigureWithTheSameType(
+          fromFigure,
+          toPosition,
+        ),
       ),
     );
   }
